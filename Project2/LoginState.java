@@ -2,11 +2,12 @@ import backend.*;
 import utils.*;
 
 public class LoginState extends WareState{
-  private static final int CLIENT_LOGIN = 0;
-  private static final int CLERK_LOGIN = 1;
-  private static final int MANAGER_LOGIN = 2;
-  private static final int HELP = 3;
-  private static final int EXIT = 4;
+  private static final int EXIT = 0;
+  private static final int CLIENT_LOGIN = 1;
+  private static final int CLERK_LOGIN = 2;
+  private static final int MANAGER_LOGIN = 3;
+  private static final int HELP = 4;
+  
   private static LoginState instance;
   private LoginState() {
       super();
@@ -20,7 +21,7 @@ public class LoginState extends WareState{
   }
 
   public void help() {
-    System.out.println("\nEnter a number between " + CLIENT_LOGIN + " and " + EXIT + " as explained below:");
+    System.out.println("\nEnter a number between " + EXIT + " and " + HELP + " as explained below:");
     System.out.println(CLIENT_LOGIN + " to login as a client");
     System.out.println(CLERK_LOGIN + " to login as a clerk");
     System.out.println(MANAGER_LOGIN + " to login as a manager");

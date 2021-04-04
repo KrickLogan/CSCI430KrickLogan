@@ -1,11 +1,8 @@
 import java.util.*;
-import java.text.*;
-import java.io.*;
 import backend.*;
 import utils.*;
 public class ClientState extends WareState {
   private static ClientState clientState;
-  private BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
   private static Warehouse warehouse;
   private static final int EXIT = 0;
   private static final int SHOW_CLIENT_DETAILS = 1;

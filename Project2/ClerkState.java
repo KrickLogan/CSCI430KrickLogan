@@ -1,6 +1,4 @@
 import java.util.*;
-import java.text.*;
-import java.io.*;
 import backend.*;
 import utils.*;
 public class ClerkState extends WareState {

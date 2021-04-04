@@ -1,5 +1,3 @@
-import java.util.*;
-import java.io.*;
 import backend.*;
 import utils.*;
 public class WareContext {
@@ -9,7 +7,6 @@ public class WareContext {
   private static WareContext context;
   private int currentUser;
   private String userID;
-  private BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
   public static final int IsClient = 0;
   public static final int IsClerk = 1;
   public static final int IsManager = 2;
@@ -83,7 +80,7 @@ public class WareContext {
   private void terminate()
   {
    if (InputUtils.yesOrNo("Save data?")) {
-      if (warehouse.save()) {
+      if (Warehouse.save()) {
          System.out.println(" The warehouse has been successfully saved in the file WarehouseData \n" );
        } else {
          System.out.println(" There has been an error in saving \n" );

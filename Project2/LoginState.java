@@ -1,5 +1,3 @@
-import java.util.*;
-import java.io.*;
 import backend.*;
 import utils.*;
 
@@ -9,7 +7,6 @@ public class LoginState extends WareState{
   private static final int MANAGER_LOGIN = 2;
   private static final int HELP = 3;
   private static final int EXIT = 4;
-  private BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
   private static LoginState instance;
   private LoginState() {
       super();

@@ -9,11 +9,9 @@ public class ClientState extends WareState {
   private static final int SHOW_TRANSACTIONS = 2;
   private static final int SHOW_WAITLIST = 3;
   private static final int SHOW_PRODUCTS = 4;
-  private static final int VIEW_CART = 5;
-  private static final int ADD_TO_CART = 6;
-  private static final int MODIFY_CART = 7;
-  private static final int PLACE_ORDER = 8;
-  private static final int HELP = 9;
+  private static final int MODIFY_CART = 5;
+  private static final int PLACE_ORDER = 6;
+  private static final int HELP = 7;
   private ClientState() {
     warehouse = Warehouse.instance();
   }
@@ -45,9 +43,7 @@ public class ClientState extends WareState {
     System.out.println(SHOW_TRANSACTIONS + " to view your transactions");
     System.out.println(SHOW_WAITLIST + " to view your waitlisted items");
     System.out.println(SHOW_PRODUCTS + " to view available products and prices");
-    System.out.println(VIEW_CART + " to view your shopping cart");
-    System.out.println(ADD_TO_CART + " to add products to your shopping cart");
-    System.out.println(MODIFY_CART + " to modify your shopping cart");
+    System.out.println(MODIFY_CART + " to switch to the modify shopping cart menu");
     System.out.println(PLACE_ORDER + " to place order");
     System.out.println("\n" + HELP + " for help");
     System.out.println(EXIT + " to logout");
@@ -115,56 +111,9 @@ public class ClientState extends WareState {
     }
     System.out.println("\n  End of cart. \n" );
   }
-  
-  public void addToCart() {
-    String clientId = WareContext.instance().getUser();
-    do {
-      String productId = InputUtils.getToken("Enter product id");
-      Product product = warehouse.getProductById(productId);
-      if(product != null) {
-        System.out.println("Product found:");
-        System.out.println("id:" + product.getId() + ", name: " + product.getName() + ", Sale Price: $" + product.getSalePrice() + "\n");
-        int productQuantity = InputUtils.getNumber("Enter quantity");
-        warehouse.addToCart(clientId, product, productQuantity);
-      } else {
-        System.out.println("Could not find that product id");
-      }
-      if (!InputUtils.yesOrNo("Add another product to the shopping cart?")) {
-        break;
-      }
-    } while (true);
-  }
 
   public void modifyCart() {
-    String clientId = WareContext.instance().getUser();
-    Client client = warehouse.getClientById(clientId);
-    ShoppingCart cart = client.getShoppingCart();
-    Boolean doneEditing = false;
-
-    while (!doneEditing) {
-      viewCart();
-      String productId = InputUtils.getToken("Enter Product ID from cart to edit");
-
-      // find the product in the shopping cart
-      ShoppingCartItem item = null;
-      Iterator<ShoppingCartItem> cartIter = cart.getShoppingCartProducts();
-      while ( cartIter.hasNext() ) {
-        ShoppingCartItem next = cartIter.next();
-        if (next.getProduct().getId().equals(productId)) {
-          item = next;
-          break;
-        }
-      }
-
-      if ( item == null ) {
-        doneEditing = !InputUtils.yesOrNo("That ID was not found in the shoping cart? Continue?");
-      } else {
-        int newQuantity = InputUtils.getNumber("Enter the desired amount to put in your shopping cart.");
-
-        item.setQuantity(newQuantity);
-        doneEditing = !InputUtils.yesOrNo("Would you like to edit more items in your cart?");
-      }
-    }
+    (WareContext.instance()).changeState(4); // transition to ShoppingCartState
   }
 
   public void placeOrder() {
@@ -209,12 +158,6 @@ public class ClientState extends WareState {
           break;
         case SHOW_PRODUCTS:
           showProducts();
-          break;
-        case VIEW_CART:
-          viewCart();
-          break;
-        case ADD_TO_CART:
-          addToCart();
           break;
         case MODIFY_CART:
           modifyCart();

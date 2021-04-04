@@ -15,6 +15,19 @@ public class ShoppingCart implements Serializable {
     cart.add(item);
     return true;
   }
+
+  public boolean removeProductFromCart(Product product) {
+    Iterator<ShoppingCartItem> cartIter = getShoppingCartProducts();
+    while(cartIter.hasNext()) {
+      ShoppingCartItem next = cartIter.next();
+      if(next.getProduct().equals( product.getId() )) {
+        cart.remove(next);
+        return true;
+      }
+    }
+    
+    return false;
+  }
   
   public Iterator<ShoppingCartItem> getShoppingCartProducts() {
     return cart.iterator();

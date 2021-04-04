@@ -9,9 +9,8 @@ public class ClerkState extends WareState {
     Exit,
     AddClient,
     ShowProducts,
-    ShowClients,
-    ShowClientsWithOutstandingBalance,
     BecomeClient,
+    QueryClients,
     DisplayProductWaitlist,
     RecieveShipment,
     Help
@@ -42,14 +41,13 @@ public class ClerkState extends WareState {
 
 
   public void help() {
-    System.out.println("\nEnter a number between " + Operations.Exit + " and " + Operations.Help + " as explained below:");
+    System.out.println("\nEnter a number between " + Operations.Exit.ordinal() + " and " + Operations.Help.ordinal() + " as explained below:");
     System.out.println(Operations.AddClient.ordinal() + " to add a new client");
     System.out.println(Operations.ShowProducts.ordinal() + " to show products");
-    System.out.println(Operations.ShowClients.ordinal() + " to show clients");
-    System.out.println(Operations.ShowClientsWithOutstandingBalance.ordinal() + " to show clients and outstanding balance");
+    System.out.println(Operations.QueryClients.ordinal() + " to query the system about clients");
     System.out.println(Operations.BecomeClient.ordinal() + " to become a specific client, gives access to client operations");
     System.out.println(Operations.DisplayProductWaitlist.ordinal() + " to display waitlist for a product");
-    System.out.println(Operations.RecieveShipment.ordinal() + " to recieve a shipment");
+    System.out.println(Operations.RecieveShipment.ordinal() + " to recieve a shipment\n");
     System.out.println(Operations.Exit.ordinal() + " to logout");
   }
 
@@ -86,7 +84,7 @@ public class ClerkState extends WareState {
 
   public void showBalance() {
     Client result;
-    String id = InputUtils.getToken("Enter client id to see balance");
+    String id = InputUtils.getToken("Enter client id to see their account balance");
 
     result = warehouse.getClientById(id);
     if (result != null) {
@@ -108,7 +106,7 @@ public class ClerkState extends WareState {
           amt += tempWaitItem.getQuantity();
         }
       }
-      System.out.println(tempProduct.toString() + " " + amt);
+      System.out.println(tempProduct.toString() + ", Waitlist Quantity: " + amt);
       amt = 0;
     }
   }
@@ -158,6 +156,10 @@ public class ClerkState extends WareState {
     }
   }
 
+  private void QueryClients() {
+    (WareContext.instance()).changeState(4); // transition to QueryClientState with code 4
+  }
+
   public void process() {
     Operations command;
     help();
@@ -172,11 +174,8 @@ public class ClerkState extends WareState {
         case ShowProducts:
           showProducts();
           break;
-        case ShowClients:
-          showClients();
-          break;
-        case ShowClientsWithOutstandingBalance:
-          showBalance();
+        case QueryClients:
+          QueryClients();
           break;
         case BecomeClient:
           becomeClient();

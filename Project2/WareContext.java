@@ -55,7 +55,7 @@ public class WareContext {
     states[2] = ManagerState.instance();
     states[3] = LoginState.instance();
     states[4] = ShoppingCartState.instance();
-    // states[5] = QueryClientState.instance();
+    states[5] = QueryClientState.instance();
     nextState = new int[6][6];
     nextState[0][0] = 3;nextState[0][1] = 1;nextState[0][2] = 2;nextState[0][3] = 3;nextState[0][4] = 4;nextState[0][5] = -2; //ClientState transitions
     nextState[1][0] = 3;nextState[1][1] = 0;nextState[1][2] = 2;nextState[1][3] = 3;nextState[1][4] = 5;nextState[1][5] = -2; //ClerkState transitions

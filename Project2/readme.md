@@ -1,6 +1,6 @@
 # This is the directory for project 2's Code
 
-## Group Members: Logan Krick, Jakob Lorenz, Dalton Maahs
+## Name: Logan Krick
 #
 ## Instructions for compiling and running
 1. Navigate to the project directory.

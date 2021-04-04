@@ -113,7 +113,7 @@ public class ClientState extends WareState {
   }
 
   public void modifyCart() {
-    (WareContext.instance()).changeState(4); // transition to ShoppingCartState
+    (WareContext.instance()).changeState(4); // transition to ShoppingCartState with code 4
   }
 
   public void placeOrder() {

@@ -48,7 +48,7 @@ public class ManagerState extends WareState {
     System.out.println(Operations.SHOW_SUPPLIERS_FOR_PRODUCT.ordinal() + " to display all suppliers for a product");
     System.out.println(Operations.SHOW_PRODUCTS_FOR_SUPPLIER.ordinal() + " to display all products from a supplier");
     System.out.println(Operations.BECOME_CLIENT.ordinal() + " to become a specific client, gives access to client operations");
-    System.out.println(Operations.BECOME_SALESCLERK.ordinal() + " to become a clerk, gives access to clerk operations");
+    System.out.println(Operations.BECOME_SALESCLERK.ordinal() + " to become a clerk, gives access to clerk operations\n");
     System.out.println(Operations.Exit.ordinal() + " to logout");
   }
 

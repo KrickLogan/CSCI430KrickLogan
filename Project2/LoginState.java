@@ -33,7 +33,7 @@ public class LoginState extends WareState{
     do {
       try {
         int value = Integer.parseInt(InputUtils.getToken("Enter command:" ));
-        if (value <= EXIT && value >= CLIENT_LOGIN) {
+        if (value <= HELP && value >= EXIT) {
           return value;
         }
       } catch (NumberFormatException nfe) {

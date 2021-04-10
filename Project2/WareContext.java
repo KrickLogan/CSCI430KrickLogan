@@ -1,16 +1,20 @@
+import javax.swing.*;
+import java.awt.event.*;
 import backend.*;
 import utils.*;
+
 public class WareContext {
   
-  private int currentState;
+  private static int currentState;
   private static Warehouse warehouse;
   private static WareContext context;
   private int currentUser;
   private String userID;
+  private static JFrame WareFrame; 
   public static final int IsClient = 0;
   public static final int IsClerk = 1;
   public static final int IsManager = 2;
-  private WareState[] states;
+  private static WareState[] states;
   private int[][] nextState;
 
 
@@ -41,6 +45,9 @@ public class WareContext {
   public String getUser()
   { return userID;}
 
+  public JFrame getFrame()
+  { return WareFrame;}
+
   private WareContext() { //constructor
     //System.out.println("In WareContext constructor");
     if (InputUtils.yesOrNo("Look for saved data and  use it?")) {
@@ -64,6 +71,13 @@ public class WareContext {
     nextState[4][0] = 0;nextState[4][1] =-2;nextState[4][2] =-2;nextState[4][3] =-2;nextState[4][4] =-2;nextState[4][5] = -2; //ShoppingCartState transitions
     nextState[5][0] = 1;nextState[5][1] =-2;nextState[5][2] =-2;nextState[5][3] =-2;nextState[5][4] =-2;nextState[5][5] = -2; //QueryCleintState transitions
     currentState = 3;
+
+    // Create JFrame Window
+    WareFrame = new JFrame("Warehouse GUI");
+	  WareFrame.addWindowListener(new WindowAdapter()
+    { public void windowClosing(WindowEvent e) {System.exit(0);} });
+    WareFrame.setSize(400,400);
+    WareFrame.setLocation(400, 400);
   }
 
   public void changeState(int transition)
@@ -108,6 +122,4 @@ public class WareContext {
   public static void main (String[] args){
     WareContext.instance().process(); 
   }
-
-
 }

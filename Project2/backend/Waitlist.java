@@ -23,8 +23,12 @@ public class Waitlist implements Serializable {
         return true;
     }
 
-    public Iterator<WaitItem> waitlist() {
+    public Iterator<WaitItem> getWaitlistItems() {
         return waitlist.iterator();
+    }
+
+    public int size() {
+      return waitlist.size();
     }
 
     private void writeObject(java.io.ObjectOutputStream output) {

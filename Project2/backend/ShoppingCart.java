@@ -33,6 +33,10 @@ public class ShoppingCart implements Serializable {
     return cart.iterator();
   }
 
+  public int size() {
+    return cart.size();
+  }
+
   public double getTotalPrice() {
     double totalPrice = 0;
     Iterator<ShoppingCartItem> cartIterator = cart.iterator();

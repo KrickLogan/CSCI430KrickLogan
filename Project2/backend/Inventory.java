@@ -24,6 +24,10 @@ public class Inventory implements Serializable {
   public Iterator<InventoryItem> getInventory(){
      return inventoryList.iterator();
   }
+
+  public int size() {
+    return inventoryList.size();
+  }
   
   private void writeObject(java.io.ObjectOutputStream output) {
     try {

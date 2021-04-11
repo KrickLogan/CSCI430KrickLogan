@@ -23,6 +23,10 @@ public class OrderList implements Serializable {
   public Iterator<Order> getOrders(){
      return orders.iterator();
   }
+
+  public int size() {
+    return orders.size();
+  }
   
   private void writeObject(java.io.ObjectOutputStream output) {
     try {

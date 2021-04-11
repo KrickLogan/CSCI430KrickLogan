@@ -24,6 +24,10 @@ public class InvoiceList implements Serializable {
   public Iterator<Invoice> getInvoices(){
      return invoices.iterator();
   }
+
+  public int size() {
+    return invoices.size();
+  }
   
   private void writeObject(java.io.ObjectOutputStream output) {
     try {

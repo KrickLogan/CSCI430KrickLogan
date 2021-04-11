@@ -256,7 +256,6 @@ public class ClientState extends WareState implements ActionListener {
     if (!cartIterator.hasNext()) {
       JOptionPane.showMessageDialog(frame, "Shopping Cart is empty.");
     } else {
-      cartIterator = client.getShoppingCart().getShoppingCartProducts();
       int result = JOptionPane.showConfirmDialog(frame,
       "Shopping Cart Total: $" + client.getShoppingCart().getTotalPrice() +
       "\nPlace Order?",
@@ -268,7 +267,7 @@ public class ClientState extends WareState implements ActionListener {
         if (warehouse.placeOrder(clientId)) {
           JOptionPane.showMessageDialog(frame,"Order placed successfully.", "Place Order", JOptionPane.INFORMATION_MESSAGE);
         } else {
-          JOptionPane.showMessageDialog(frame,"There was a problem placing your order.", "Place Order", JOptionPane.WARNING_MESSAGE);
+          JOptionPane.showMessageDialog(frame,"There was a problem placing your order.", "ERROR", JOptionPane.WARNING_MESSAGE);
         }
       } else if (result == JOptionPane.NO_OPTION) {
         JOptionPane.showMessageDialog(frame,"Canceled, order was not placed.", "Place Order", JOptionPane.INFORMATION_MESSAGE);
@@ -303,6 +302,7 @@ public class ClientState extends WareState implements ActionListener {
     frame.getContentPane().add(this.modifyCartButton);
     frame.getContentPane().add(this.placeOrderButton);
     frame.getContentPane().add(this.exitButton);
+    frame.setTitle("Client Menu");
     frame.setVisible(true);
     frame.paint(frame.getGraphics()); 
     frame.toFront();

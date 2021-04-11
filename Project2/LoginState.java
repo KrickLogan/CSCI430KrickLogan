@@ -105,6 +105,7 @@ public class LoginState extends WareState implements ActionListener {
     frame.getContentPane().add(this.clerkButton);
     frame.getContentPane().add(this.managerButton);
     frame.getContentPane().add(this.exitButton);
+    frame.setTitle("Warehouse Login");
     frame.setVisible(true);
     frame.paint(frame.getGraphics()); 
     frame.toFront();

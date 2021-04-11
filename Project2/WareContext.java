@@ -120,7 +120,7 @@ public class WareContext {
       if (Warehouse.save()) {
         JOptionPane.showMessageDialog(WareFrame,"The warehouse has been successfully saved in the file WarehouseData.\nGoodbye.", "Warehouse System", JOptionPane.INFORMATION_MESSAGE);
       } else {
-        JOptionPane.showMessageDialog(WareFrame,"There has been an error in saving.\nGoodbye.", "Warehouse System", JOptionPane.WARNING_MESSAGE);
+        JOptionPane.showMessageDialog(WareFrame,"There has been an error in saving.\nGoodbye.", "ERROR", JOptionPane.WARNING_MESSAGE);
       }
     } else if (result == JOptionPane.NO_OPTION) {
       JOptionPane.showMessageDialog(WareFrame,"Goodbye.", "Warehouse System", JOptionPane.PLAIN_MESSAGE);

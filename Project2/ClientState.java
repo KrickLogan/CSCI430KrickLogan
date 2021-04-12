@@ -9,7 +9,6 @@ public class ClientState extends WareState implements ActionListener {
   private static Warehouse warehouse;
 
   private JFrame frame;
-  // private JLabel mainLabel;
   private AbstractButton clientDetailsButton, transactionsButton, waitlistButton, productsButton,
     modifyCartButton, placeOrderButton, exitButton;
 
@@ -279,14 +278,13 @@ public class ClientState extends WareState implements ActionListener {
     frame = WareContext.instance().getFrame();
     frame.getContentPane().removeAll();
     frame.getContentPane().setLayout(new FlowLayout());
-    // mainLabel = new JLabel("Client Menu");
     clientDetailsButton = new JButton("View Client Details");
-    transactionsButton =  new JButton("View Transactions");
-    waitlistButton =  new JButton("View Waitlist");
-    productsButton =  new JButton("View Product List");
-    modifyCartButton =  new JButton("Modify Shopping Cart");
-    placeOrderButton =  new JButton("Place Order");
-    exitButton = new JButton("Exit");  
+    transactionsButton = new JButton("View Transactions");
+    waitlistButton = new JButton("View Waitlist");
+    productsButton = new JButton("View Product List");
+    modifyCartButton = new JButton("Modify Shopping Cart");
+    placeOrderButton = new JButton("Place Order");
+    exitButton = new JButton("Logout");  
     clientDetailsButton.addActionListener(this);
     transactionsButton.addActionListener(this);
     waitlistButton.addActionListener(this);
@@ -294,7 +292,6 @@ public class ClientState extends WareState implements ActionListener {
     modifyCartButton.addActionListener(this);
     placeOrderButton.addActionListener(this);
     exitButton.addActionListener(this);
-    // frame.getContentPane().add(this.mainLabel);
     frame.getContentPane().add(this.clientDetailsButton);
     frame.getContentPane().add(this.transactionsButton);
     frame.getContentPane().add(this.waitlistButton);

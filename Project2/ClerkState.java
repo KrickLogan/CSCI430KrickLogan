@@ -95,50 +95,6 @@ public class ClerkState extends WareState implements ActionListener {
     }
   }
 
-  public void showClients() {
-    Iterator<Client> iter = warehouse.getClients();
-
-    // if list is empty notify user
-    if (!iter.hasNext()) {
-      JOptionPane.showMessageDialog(frame, "No clients were found.");
-    } else { // else display table
-      
-      Object[][] data = new Object[ClientList.instance().size()][5];
-      int rowCounter = 0;
-
-      iter = warehouse.getClients();
-      while(iter.hasNext()) {
-        Client next = iter.next();
-        data[rowCounter][0] = next.getClientId();
-        data[rowCounter][1] = next.getFirstName();
-        data[rowCounter][2] = next.getLastName();
-        data[rowCounter][3] = next.getAddress();
-        data[rowCounter][4] = next.getBalance();
-        rowCounter++;
-      }
-
-      String[] columnNames = {"Client ID", "First Name", "Last Name", "Address", "Balance"};
-
-      // create & display new JFrame for table
-      JFrame f = new JFrame("Clients");
-      f.setSize(750,500);
-      f.setLocation(400, 400);
-      JTable table = new JTable(data, columnNames) {
-        private static final long serialVersionUID = 1L;
-        public boolean isCellEditable(int row, int column) {                
-                return false;               
-        }
-      };
-      JScrollPane scrollPane = new JScrollPane(table);
-      table.setFillsViewportHeight(true);
-      f.getContentPane().add(scrollPane);
-      f.setVisible(true);
-      f.paint(f.getGraphics()); 
-      f.toFront();
-      f.requestFocus();
-    }
-  }
-
   public void showProductsWaitlist() {
     String productId = JOptionPane.showInputDialog(frame,"Please input the Product ID\nto view the product's waitlist: ");
     Product product = warehouse.getProductById(productId);

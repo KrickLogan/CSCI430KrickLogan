@@ -1,32 +1,38 @@
+import javax.swing.*;
+import java.awt.event.*;
 import backend.*;
-import utils.*;
+
 public class WareContext {
   
-  private int currentState;
+  private static int currentState;
   private static Warehouse warehouse;
   private static WareContext context;
   private int currentUser;
   private String userID;
+  private static JFrame WareFrame; 
   public static final int IsClient = 0;
   public static final int IsClerk = 1;
   public static final int IsManager = 2;
-  private WareState[] states;
+  private static WareState[] states;
   private int[][] nextState;
 
 
-  private void retrieve() {
+  private Boolean retrieve() {
     try {
       Warehouse tempWarehouse = Warehouse.retrieve();
       if (tempWarehouse != null) {
-        System.out.println(" The warehouse has been successfully retrieved from the file WarehouseData \n" );
+        System.out.println("The warehouse has been successfully retrieved from the file WarehouseData \n" );
         warehouse = tempWarehouse;
+        return true;
       } else {
-        System.out.println("File doesnt exist; creating new warehouse" );
+        System.out.println("File doesn't exist; creating new warehouse" );
         warehouse = Warehouse.instance();
+        return false;
       }
     } catch(Exception cnfe) {
       cnfe.printStackTrace();
     }
+    return false;
   }
 
   public void setLogin(int code)
@@ -41,13 +47,34 @@ public class WareContext {
   public String getUser()
   { return userID;}
 
+  public JFrame getFrame()
+  { return WareFrame;}
+
   private WareContext() { //constructor
-    //System.out.println("In WareContext constructor");
-    if (InputUtils.yesOrNo("Look for saved data and  use it?")) {
-      retrieve();
-    } else {
+    // Create JFrame Window
+    WareFrame = new JFrame("Warehouse GUI");
+	  WareFrame.addWindowListener(new WindowAdapter()
+    { public void windowClosing(WindowEvent e) {System.exit(0);} });
+    WareFrame.setSize(400,300);
+    WareFrame.setLocation(400, 400);
+
+    // Ask to load saved WarehouseData file
+    int result = JOptionPane.showConfirmDialog(WareFrame,
+      "Look for saved data and use it?",
+      "Warehouse System",
+      JOptionPane.YES_NO_OPTION,
+      JOptionPane.QUESTION_MESSAGE);
+    
+    if(result == JOptionPane.YES_OPTION) {
+      if (retrieve()) {
+        JOptionPane.showMessageDialog(WareFrame,"The warehouse has been successfully retrieved from the file WarehouseData.", "Warehouse System", JOptionPane.INFORMATION_MESSAGE);
+      } else {
+        JOptionPane.showMessageDialog(WareFrame,"WarehouseData file doesn't exist.\nCreating new warehouse.", "Warehouse System", JOptionPane.WARNING_MESSAGE);
+      }
+    } else if (result == JOptionPane.NO_OPTION) {
       warehouse = Warehouse.instance();
     }
+
     // set up the FSM and transition table;
     states = new WareState[6];
     states[0] = ClientState.instance();
@@ -81,16 +108,25 @@ public class WareContext {
     states[currentState].run();
   }
 
-  private void terminate()
-  {
-   if (InputUtils.yesOrNo("Save data?")) {
+  private void terminate() {
+    // Ask to save data to WarehouseData file
+    int result = JOptionPane.showConfirmDialog(WareFrame,
+      "Save Warehouse Data?",
+      "Warehouse System",
+      JOptionPane.YES_NO_OPTION,
+      JOptionPane.QUESTION_MESSAGE);
+    
+    if(result == JOptionPane.YES_OPTION) {
       if (Warehouse.save()) {
-         System.out.println(" The warehouse has been successfully saved in the file WarehouseData \n" );
-       } else {
-         System.out.println(" There has been an error in saving \n" );
-       }
-     }
-   System.out.println(" Goodbye \n "); System.exit(0);
+        JOptionPane.showMessageDialog(WareFrame,"The warehouse has been successfully saved in the file WarehouseData.\nGoodbye.", "Warehouse System", JOptionPane.INFORMATION_MESSAGE);
+      } else {
+        JOptionPane.showMessageDialog(WareFrame,"There has been an error in saving.\nGoodbye.", "ERROR", JOptionPane.WARNING_MESSAGE);
+      }
+    } else if (result == JOptionPane.NO_OPTION) {
+      JOptionPane.showMessageDialog(WareFrame,"Goodbye.", "Warehouse System", JOptionPane.PLAIN_MESSAGE);
+      warehouse = Warehouse.instance();
+    }
+    System.exit(0); // exit
   }
 
   public static WareContext instance() {
@@ -108,6 +144,4 @@ public class WareContext {
   public static void main (String[] args){
     WareContext.instance().process(); 
   }
-
-
 }

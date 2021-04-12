@@ -25,6 +25,10 @@ public class SupplierList implements Serializable {
         return suppliers.iterator();
     }
 
+    public int size() {
+      return suppliers.size();
+    }
+
     private void writeObject(java.io.ObjectOutputStream output) {
         try {
           output.defaultWriteObject();

@@ -1,17 +1,17 @@
 import java.util.*;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
 import backend.*;
-import utils.*;
-public class ClientState extends WareState {
+
+public class ClientState extends WareState implements ActionListener {
   private static ClientState clientState;
   private static Warehouse warehouse;
-  private static final int EXIT = 0;
-  private static final int SHOW_CLIENT_DETAILS = 1;
-  private static final int SHOW_TRANSACTIONS = 2;
-  private static final int SHOW_WAITLIST = 3;
-  private static final int SHOW_PRODUCTS = 4;
-  private static final int MODIFY_CART = 5;
-  private static final int PLACE_ORDER = 6;
-  private static final int HELP = 7;
+
+  private JFrame frame;
+  private AbstractButton clientDetailsButton, transactionsButton, waitlistButton, productsButton,
+    modifyCartButton, placeOrderButton, exitButton;
+
   private ClientState() {
     warehouse = Warehouse.instance();
   }
@@ -24,92 +24,167 @@ public class ClientState extends WareState {
     }
   }
 
-  public int getCommand() {
-    do {
-      try {
-        int value = Integer.parseInt(InputUtils.getToken("Enter command:" + HELP + " for help"));
-        if (value >= EXIT && value <= HELP) {
-          return value;
-        }
-      } catch (NumberFormatException nfe) {
-        System.out.println("Enter a number");
-      }
-    } while (true);
-  }
+  public void actionPerformed(ActionEvent event) {
+    if (event.getSource().equals(this.clientDetailsButton))
+      this.showClientDetails();
+    else if (event.getSource().equals(this.transactionsButton)) 
+      this.showTransactions();
+    else if (event.getSource().equals(this.waitlistButton)) 
+      this.showWaitlist();
+    else if (event.getSource().equals(this.productsButton)) 
+      this.showProducts();
+    else if (event.getSource().equals(this.modifyCartButton)) 
+      this.modifyCart();
+    else if (event.getSource().equals(this.placeOrderButton)) 
+      this.placeOrder();
+    else if (event.getSource().equals(this.exitButton)) 
+      this.logout(); 
+  } 
 
-  public void help() {
-    System.out.println("\nEnter a number between " + EXIT + " and " + HELP + " as explained below:");
-    System.out.println(SHOW_CLIENT_DETAILS + " to view your client details");
-    System.out.println(SHOW_TRANSACTIONS + " to view your transactions");
-    System.out.println(SHOW_WAITLIST + " to view your waitlisted items");
-    System.out.println(SHOW_PRODUCTS + " to view available products and prices");
-    System.out.println(MODIFY_CART + " to switch to the modify shopping cart menu");
-    System.out.println(PLACE_ORDER + " to place order");
-    System.out.println("\n" + HELP + " for help");
-    System.out.println(EXIT + " to logout");
+  public void clear() { //clean up stuff
+    frame.getContentPane().removeAll();
+    frame.paint(frame.getGraphics());   
   }
 
   public void showClientDetails() {
     String id = WareContext.instance().getUser();
     Client client = warehouse.getClientById(id);
-    System.out.println(client.toString());
+    String clientDetails = "Client ID: " + client.getClientId() + ", First Name: " + client.getFirstName() +
+      ", Last Name: " + client.getLastName() + ", Address: " + client.getAddress() + ", Balance: $" + client.getBalance();
+    
+    JOptionPane.showMessageDialog(frame, clientDetails, "Client Details", JOptionPane.INFORMATION_MESSAGE);
   }
 
   public void showTransactions() {
-    System.out.println("\n  List of Transactions:\n");
-    Iterator<Transaction> result;
-    String clientID = WareContext.instance().getUser();
-    //Calendar date  = getDate("Please enter the date for which you want records as mm/dd/yy");
-    result = warehouse.getTransactions(clientID);
-    if (result == null) {
-      System.out.println("Invalid Client ID");
-    } else {
-      while(result.hasNext()) {
-        Transaction transaction = (Transaction) result.next();
-        System.out.println(transaction.getDescription() + ", Date: " + transaction.getDate() + ", Total Cost: $" + transaction.getAmount());
+    String id = WareContext.instance().getUser();
+    Client client = warehouse.getClientById(id);
+    Iterator<Transaction> tIterator = client.getTransactionList().getTransactions();
+
+    // if transaction list is empty notify user
+    if (!tIterator.hasNext()) {
+      JOptionPane.showMessageDialog(frame, "No transactions were found.");
+    } else { // else display table of Transactions
+      
+      Object[][] data = new Object[client.getTransactionList().size()][3];
+      int rowCounter = 0;
+
+      tIterator = client.getTransactionList().getTransactions();
+      while(tIterator.hasNext()) {
+        Transaction nextTrans = tIterator.next();
+        data[rowCounter][0] = nextTrans.getDescription();
+        data[rowCounter][1] = nextTrans.getDate();
+        data[rowCounter][2] = nextTrans.getAmount();
+        rowCounter++;
       }
-      System.out.println("\n  There are no more transactions. \n" );
+
+      String[] columnNames = {"Description", "Date", "Total"};
+
+      // create & display new JFrame for table
+      JFrame f = new JFrame("Transactions");
+      f.setSize(750,500);
+      f.setLocation(400, 400);
+      JTable table = new JTable(data, columnNames) {
+        private static final long serialVersionUID = 1L;
+        public boolean isCellEditable(int row, int column) {                
+                return false;               
+        }
+      };
+      JScrollPane scrollPane = new JScrollPane(table);
+      table.setFillsViewportHeight(true);
+      f.getContentPane().add(scrollPane);
+      f.setVisible(true);
+      f.paint(f.getGraphics()); 
+      f.toFront();
+      f.requestFocus();
     }
   }
 
   public void showWaitlist() {
-    System.out.println("\n  Waitlist:\n");
     String id = WareContext.instance().getUser();
     Client client = warehouse.getClientById(id);
-    Iterator<WaitItem> waitList = warehouse.getWaitlist();
-    while(waitList.hasNext()) {
-      WaitItem tempWaitItem = waitList.next();
-      if(client.equals(tempWaitItem.getClient().getClientId())) {
-        System.out.println(tempWaitItem.toString() + "\n");
+    Iterator<WaitItem> iter = warehouse.getWaitlist();
+
+    // if list is empty notify user
+    if (!iter.hasNext()) {
+      JOptionPane.showMessageDialog(frame, "No waitlisted items were found.");
+    } else { // else display table
+      
+      Object[][] data = new Object[Waitlist.instance().size()][3];
+      int rowCounter = 0;
+
+      iter = Warehouse.instance().getWaitlist();
+      while(iter.hasNext()) {
+        WaitItem next = iter.next();
+        if(client.equals(next.getClient().getClientId())) {
+          data[rowCounter][0] = next.getOrderFilled();
+          data[rowCounter][1] = next.getProduct().getId();
+          data[rowCounter][2] = next.getQuantity();
+          rowCounter++;
+        }
       }
+
+      String[] columnNames = {"Order Filled Status", "Product ID", "Quantity"};
+
+      // create & display new JFrame for table
+      JFrame f = new JFrame("Waitlisted Orders");
+      f.setSize(750,500);
+      f.setLocation(400, 400);
+      JTable table = new JTable(data, columnNames) {
+        private static final long serialVersionUID = 1L;
+        public boolean isCellEditable(int row, int column) {                
+                return false;               
+        }
+      };
+      JScrollPane scrollPane = new JScrollPane(table);
+      table.setFillsViewportHeight(true);
+      f.getContentPane().add(scrollPane);
+      f.setVisible(true);
+      f.paint(f.getGraphics()); 
+      f.toFront();
+      f.requestFocus();
     }
-    System.out.println("  There are no more waitlisted items. \n");
   }
 
   public void showProducts() {
-    System.out.println("\n  List of available products:\n");
-    Iterator<InventoryItem> inventory = warehouse.getInventory();
-    while(inventory.hasNext()) {
-      InventoryItem tempItem = inventory.next();
-      if (tempItem.getQuantity() > 0) {
-        System.out.println("Product info: id: " + tempItem.getProduct().getId() + ", name: " + tempItem.getProduct().getName()
-          + ", sale price: $" + tempItem.getProduct().getSalePrice() + ", quantity in stock: " + tempItem.getQuantity());
-      }
-    }
-    System.out.println("\n  There are no more products in the inventory. \n");
-  }
+    Iterator<Product> iter = warehouse.getProducts();
 
-  public void viewCart() {
-    String clientId = WareContext.instance().getUser();
-    Client client = warehouse.getClientById(clientId);
-    System.out.println("\n  Shopping Cart Contents:\n");
-    Iterator<ShoppingCartItem> cIterator = client.getShoppingCart().getShoppingCartProducts();
-    while(cIterator.hasNext()) {
-      ShoppingCartItem item = cIterator.next();
-      System.out.println("Product id: " + item.getProduct().getId() + ", name: " + item.getProduct().getName() + 
-        ", sale price: $" + item.getProduct().getSalePrice() + ", Quantity in cart: " + item.getQuantity());
+    // if list is empty notify user
+    if (!iter.hasNext()) {
+      JOptionPane.showMessageDialog(frame, "No products were found.");
+    } else { // else display table
+      
+      Object[][] data = new Object[ProductList.instance().size()][3];
+      int rowCounter = 0;
+
+      iter = warehouse.getProducts();
+      while(iter.hasNext()) {
+        Product next = iter.next();
+        data[rowCounter][0] = next.getId();
+        data[rowCounter][1] = next.getName();
+        data[rowCounter][2] = next.getSalePrice();
+        rowCounter++;
+      }
+
+      String[] columnNames = {"Product ID", "Product Name", "Sale Price"};
+
+      // create & display new JFrame for table
+      JFrame f = new JFrame("Products");
+      f.setSize(750,500);
+      f.setLocation(400, 400);
+      JTable table = new JTable(data, columnNames) {
+        private static final long serialVersionUID = 1L;
+        public boolean isCellEditable(int row, int column) {                
+                return false;               
+        }
+      };
+      JScrollPane scrollPane = new JScrollPane(table);
+      table.setFillsViewportHeight(true);
+      f.getContentPane().add(scrollPane);
+      f.setVisible(true);
+      f.paint(f.getGraphics()); 
+      f.toFront();
+      f.requestFocus();
     }
-    System.out.println("\n  End of cart. \n" );
   }
 
   public void modifyCart() {
@@ -121,60 +196,58 @@ public class ClientState extends WareState {
     Client client = warehouse.getClientById(clientId);
 
     Iterator<ShoppingCartItem> cartIterator = client.getShoppingCart().getShoppingCartProducts();
-    if (cartIterator.hasNext()) {
-    viewCart();
-    System.out.println("Shopping Cart Total: $" + client.getShoppingCart().getTotalPrice());
-      if(InputUtils.yesOrNo("Are you sure you wish to place an order?")) {
-        if(warehouse.placeOrder(clientId)) {
-          System.out.println("Order placed: total price charged to your balance,");
-          System.out.println("shopping cart has been emptied, and invoice generated.");
-        } else {
-          System.out.println("Unable to place order");
-        }
-        } else {
-          System.out.println("Order Canceled");
-        }
+    if (!cartIterator.hasNext()) {
+      JOptionPane.showMessageDialog(frame, "Shopping Cart is empty.");
     } else {
-        System.out.println("Shopping cart is empty, unable to place the order");
-    }
-  }
-
-  public void process() {
-    int command;
-    help();
-    while ((command = getCommand()) != EXIT) {
-      switch (command) {
-        case HELP:
-          help();
-          break;
-        case SHOW_CLIENT_DETAILS:
-          showClientDetails();
-          break;
-        case SHOW_TRANSACTIONS:
-          showTransactions();
-          break;
-        case SHOW_WAITLIST:
-          showWaitlist();
-          break;
-        case SHOW_PRODUCTS:
-          showProducts();
-          break;
-        case MODIFY_CART:
-          modifyCart();
-          break;
-        case PLACE_ORDER:
-          placeOrder();
-          break;
-        
-        default:
-          System.out.println("Invalid choice");
+      int result = JOptionPane.showConfirmDialog(frame,
+      "Shopping Cart Total: $" + client.getShoppingCart().getTotalPrice() +
+      "\nPlace Order?",
+      "Place Order",
+      JOptionPane.YES_NO_OPTION,
+      JOptionPane.QUESTION_MESSAGE);
+    
+      if(result == JOptionPane.YES_OPTION) {
+        if (warehouse.placeOrder(clientId)) {
+          JOptionPane.showMessageDialog(frame,"Order placed successfully.", "Place Order", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+          JOptionPane.showMessageDialog(frame,"There was a problem placing your order.", "ERROR", JOptionPane.WARNING_MESSAGE);
+        }
+      } else if (result == JOptionPane.NO_OPTION) {
+        JOptionPane.showMessageDialog(frame,"Canceled, order was not placed.", "Place Order", JOptionPane.INFORMATION_MESSAGE);
       }
     }
-    logout();
   }
 
   public void run() {
-    process();
+    frame = WareContext.instance().getFrame();
+    frame.getContentPane().removeAll();
+    frame.getContentPane().setLayout(new FlowLayout());
+    clientDetailsButton = new JButton("View Client Details");
+    transactionsButton = new JButton("View Transactions");
+    waitlistButton = new JButton("View Waitlist");
+    productsButton = new JButton("View Product List");
+    modifyCartButton = new JButton("Shopping Cart Menu");
+    placeOrderButton = new JButton("Place Order");
+    exitButton = new JButton("Logout");  
+    clientDetailsButton.addActionListener(this);
+    transactionsButton.addActionListener(this);
+    waitlistButton.addActionListener(this);
+    productsButton.addActionListener(this);
+    modifyCartButton.addActionListener(this);
+    placeOrderButton.addActionListener(this);
+    exitButton.addActionListener(this);
+    frame.getContentPane().add(this.clientDetailsButton);
+    frame.getContentPane().add(this.transactionsButton);
+    frame.getContentPane().add(this.waitlistButton);
+    frame.getContentPane().add(this.productsButton);
+    frame.getContentPane().add(this.modifyCartButton);
+    frame.getContentPane().add(this.placeOrderButton);
+    frame.getContentPane().add(this.exitButton);
+    frame.setTitle("Client Menu");
+    frame.setVisible(true);
+    frame.paint(frame.getGraphics()); 
+    frame.toFront();
+    frame.requestFocus();
   }
 
   public void logout()

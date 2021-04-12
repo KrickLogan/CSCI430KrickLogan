@@ -1,14 +1,17 @@
 import java.util.*;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
 import backend.*;
-import utils.*;
-public class ShoppingCartState extends WareState {
+
+public class ShoppingCartState extends WareState implements ActionListener {
   private static ShoppingCartState shoppingCartState;
   private static Warehouse warehouse;
-  private static final int EXIT = 0;
-  private static final int VIEW_CART = 1;
-  private static final int ADD_TO_CART = 2;
-  private static final int MODIFY_CART = 3;
-  private static final int HELP = 4;
+
+  private JFrame frame;
+  private AbstractButton viewCartButton, addToCartButton,
+    modifyCartButton, exitButton;
+
   private ShoppingCartState() {
     warehouse = Warehouse.instance();
   }
@@ -21,55 +24,84 @@ public class ShoppingCartState extends WareState {
     }
   }
 
-  public int getCommand() {
-    do {
-      try {
-        int value = Integer.parseInt(InputUtils.getToken("Enter command:" + HELP + " for help"));
-        if (value >= EXIT && value <= HELP) {
-          return value;
-        }
-      } catch (NumberFormatException nfe) {
-        System.out.println("Enter a number");
-      }
-    } while (true);
-  }
-
-  public void help() {
-    System.out.println("\nEnter a number between " + EXIT + " and " + HELP + " as explained below:");
-    System.out.println(VIEW_CART + " to view your shopping cart");
-    System.out.println(ADD_TO_CART + " to add products to your shopping cart");
-    System.out.println(MODIFY_CART + " to modify or remove items from your shopping cart");
-    System.out.println("\n" + HELP + " for help");
-    System.out.println(EXIT + " to return to client menu");
+  public void actionPerformed(ActionEvent event) {
+    if (event.getSource().equals(this.viewCartButton))
+      this.viewCart();
+    else if (event.getSource().equals(this.addToCartButton)) 
+      this.addToCart();
+    else if (event.getSource().equals(this.modifyCartButton)) 
+      this.modifyCart();
+    else if (event.getSource().equals(this.exitButton)) 
+      this.logout(); 
   }
 
   public void viewCart() {
-    String clientId = WareContext.instance().getUser();
-    Client client = warehouse.getClientById(clientId);
-    System.out.println("\n  Shopping Cart Contents:\n");
-    Iterator<ShoppingCartItem> cIterator = client.getShoppingCart().getShoppingCartProducts();
-    while(cIterator.hasNext()) {
-      ShoppingCartItem item = cIterator.next();
-      System.out.println("Product id: " + item.getProduct().getId() + ", name: " + item.getProduct().getName() + 
-        ", sale price: $" + item.getProduct().getSalePrice() + ", Quantity in cart: " + item.getQuantity());
+    String id = WareContext.instance().getUser();
+    Client client = warehouse.getClientById(id);
+    Iterator<ShoppingCartItem> iter = client.getShoppingCart().getShoppingCartProducts();
+
+    // if list is empty notify user
+    if (!iter.hasNext()) {
+      JOptionPane.showMessageDialog(frame, "Shopping Cart is empty.");
+    } else { // else display table
+      
+      Object[][] data = new Object[client.getShoppingCart().size()][4];
+      int rowCounter = 0;
+
+      iter = client.getShoppingCart().getShoppingCartProducts();
+      while(iter.hasNext()) {
+        ShoppingCartItem next = iter.next();
+        data[rowCounter][0] = next.getProduct().getId();
+        data[rowCounter][1] = next.getProduct().getName();
+        data[rowCounter][2] = next.getProduct().getSalePrice();
+        data[rowCounter][3] = next.getQuantity();
+        rowCounter++;
+      }
+
+      String[] columnNames = {"Product ID", "Product Name", "Sale Price", "Quantity in Cart"};
+
+      // create & display new JFrame for table
+      JFrame f = new JFrame("Shopping Cart Contents");
+      f.setSize(750,500);
+      f.setLocation(400, 400);
+      JTable table = new JTable(data, columnNames) {
+        private static final long serialVersionUID = 1L;
+        public boolean isCellEditable(int row, int column) {                
+                return false;               
+        }
+      };
+      JScrollPane scrollPane = new JScrollPane(table);
+      table.setFillsViewportHeight(true);
+      f.getContentPane().add(scrollPane);
+      f.setVisible(true);
+      f.paint(f.getGraphics()); 
+      f.toFront();
+      f.requestFocus();
     }
-    System.out.println("\n  End of cart. \n" );
   }
   
   public void addToCart() {
     String clientId = WareContext.instance().getUser();
     do {
-      String productId = InputUtils.getToken("Enter product id");
+      String productId = JOptionPane.showInputDialog(frame,"Enter Product ID:");
+      
       Product product = warehouse.getProductById(productId);
       if(product != null) {
-        System.out.println("Product found:");
-        System.out.println("id:" + product.getId() + ", name: " + product.getName() + ", Sale Price: $" + product.getSalePrice() + "\n");
-        int productQuantity = InputUtils.getNumber("Enter quantity");
-        warehouse.addToCart(clientId, product, productQuantity);
+        String q = JOptionPane.showInputDialog(frame,"Enter quantity");
+        int quantity = Integer.valueOf(q);
+        warehouse.addToCart(clientId, product, quantity);
+        JOptionPane.showMessageDialog(frame,"Successfully added to your shopping cart.", "Add Products to Shopping Cart", JOptionPane.PLAIN_MESSAGE);
       } else {
-        System.out.println("Could not find that product id");
+        JOptionPane.showMessageDialog(frame,"There was a problem adding the product to the shopping cart.", "ERROR", JOptionPane.WARNING_MESSAGE);
       }
-      if (!InputUtils.yesOrNo("Add another product to the shopping cart?")) {
+      // add another product to cart? y/n
+      int yesNoResult = JOptionPane.showConfirmDialog(frame,
+      "Add another product to the shopping cart?",
+      "Add Products to Shopping Cart",
+      JOptionPane.YES_NO_OPTION,
+      JOptionPane.QUESTION_MESSAGE);
+    
+      if (yesNoResult == JOptionPane.NO_OPTION) {
         break;
       }
     } while (true);
@@ -82,8 +114,7 @@ public class ShoppingCartState extends WareState {
     Boolean doneEditing = false;
 
     while (!doneEditing) {
-      viewCart();
-      String productId = InputUtils.getToken("Enter Product ID from cart to edit");
+      String productId = JOptionPane.showInputDialog(frame,"Enter a Product ID from the shopping cart to edit:");
 
       // find the product in the shopping cart
       ShoppingCartItem item = null;
@@ -96,55 +127,57 @@ public class ShoppingCartState extends WareState {
         }
       }
 
-      if ( item == null ) {
-        doneEditing = !InputUtils.yesOrNo("That ID was not found in the shopping cart? Continue?");
-      } else {
-        int newQuantity = InputUtils.getNumber("Enter the desired quantity, or '0' to remove the product from you cart.");
+      if ( item != null ) {
+        String newQ = JOptionPane.showInputDialog(frame,"Enter the desired quantity,\nor '0' to remove the product from you cart.");
+        int newQuantity = Integer.valueOf(newQ);
         if(newQuantity == 0) {
           if(cart.removeProductFromCart(warehouse.getProductById(productId))) {
-            System.out.println("The product has been removed from your cart.");
+            JOptionPane.showMessageDialog(frame,"Product has been removed from your shopping cart", "Modify Shopping Cart", JOptionPane.PLAIN_MESSAGE);
           } else {
-            System.out.println("Error: Product was unable to be removed from your cart.");
+            JOptionPane.showMessageDialog(frame,"There was a problem removing the product from your shopping cart.", "ERROR", JOptionPane.WARNING_MESSAGE);
           }
         } else if (newQuantity > 0) {
           item.setQuantity(newQuantity);
         } else {
-          System.out.println("Invalid input. Please enter a number greater than or equal to 0.");
+          JOptionPane.showMessageDialog(frame,"Invalid input. Please enter a number greater than or equal to 0.", "ERROR", JOptionPane.WARNING_MESSAGE);
         }
-
-        
-        doneEditing = !InputUtils.yesOrNo("Would you like to edit more items in your cart?");
+      } else {
+        JOptionPane.showMessageDialog(frame,"Could not find that product in your shopping cart.", "ERROR", JOptionPane.WARNING_MESSAGE);
+      }
+      // edit another product? y/n
+      int yesNoResult = JOptionPane.showConfirmDialog(frame,
+      "Edit another product in your shopping cart?",
+      "Modify Shopping Cart",
+      JOptionPane.YES_NO_OPTION,
+      JOptionPane.QUESTION_MESSAGE);
+    
+      if (yesNoResult == JOptionPane.NO_OPTION) {
+        doneEditing = true;;
       }
     }
-  }
-
-  public void process() {
-    int command;
-    help();
-    while ((command = getCommand()) != EXIT) {
-      switch (command) {
-        case HELP:
-          help();
-          break;
-        case VIEW_CART:
-          viewCart();
-          break;
-        case ADD_TO_CART:
-          addToCart();
-          break;
-        case MODIFY_CART:
-          modifyCart();
-          break;
-        
-        default:
-          System.out.println("Invalid choice");
-      }
-    }
-    logout();
   }
 
   public void run() {
-    process();
+    frame = WareContext.instance().getFrame();
+    frame.getContentPane().removeAll();
+    frame.getContentPane().setLayout(new FlowLayout());
+    viewCartButton = new JButton("View Shopping Cart");
+    addToCartButton = new JButton("Add to Shopping Cart");
+    modifyCartButton = new JButton("Modify Shopping Cart");
+    exitButton = new JButton("Return to Client Menu");  
+    viewCartButton.addActionListener(this);
+    addToCartButton.addActionListener(this);
+    modifyCartButton.addActionListener(this);
+    exitButton.addActionListener(this);
+    frame.getContentPane().add(this.viewCartButton);
+    frame.getContentPane().add(this.addToCartButton);
+    frame.getContentPane().add(this.modifyCartButton);
+    frame.getContentPane().add(this.exitButton);
+    frame.setTitle("Shopping Cart Menu");
+    frame.setVisible(true);
+    frame.paint(frame.getGraphics()); 
+    frame.toFront();
+    frame.requestFocus();
   }
 
   public void logout() {

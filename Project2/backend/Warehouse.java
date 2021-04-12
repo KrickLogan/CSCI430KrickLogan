@@ -341,7 +341,7 @@ public class Warehouse implements Serializable {
 
     // get iterator for Waitlist
     public Iterator<WaitItem> getWaitlist() {
-        return Waitlist.instance().waitlist();
+        return Waitlist.instance().getWaitlistItems();
     }
     
     // get iterator for InvoiceList
@@ -398,7 +398,7 @@ public class Warehouse implements Serializable {
     //get a list of items on the waitlist with the mathcing productId
     public List<WaitItem> getWaitItemsByProductId(String id) {
         List<WaitItem> foundItemsList = new LinkedList<WaitItem>();
-        Iterator<WaitItem> waitlist = Waitlist.instance().waitlist();
+        Iterator<WaitItem> waitlist = Waitlist.instance().getWaitlistItems();
 
         Product p = getProductById(id);
         while (waitlist.hasNext() && p != null) {

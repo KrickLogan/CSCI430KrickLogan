@@ -26,6 +26,10 @@ public class ClientList implements Serializable {
         return clients.iterator();
     }
 
+    public int size() {
+      return clients.size();
+    }
+
     private void writeObject(java.io.ObjectOutputStream output) {
         try {
           output.defaultWriteObject();

@@ -23,6 +23,10 @@ public class ProductList implements Serializable {
   public Iterator<Product> getProducts(){
      return products.iterator();
   }
+
+  public int size() {
+    return products.size();
+  }
   
   private void writeObject(java.io.ObjectOutputStream output) {
     try {

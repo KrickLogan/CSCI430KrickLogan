@@ -187,62 +187,6 @@ public class ClientState extends WareState implements ActionListener {
     }
   }
 
-  public void viewCart() {
-    String id = WareContext.instance().getUser();
-    Client client = warehouse.getClientById(id);
-    Iterator<ShoppingCartItem> iter = client.getShoppingCart().getShoppingCartProducts();
-
-    // if list is empty notify user
-    if (!iter.hasNext()) {
-      JOptionPane.showMessageDialog(frame, "Shopping Cart is empty.");
-    } else { // else display table
-      
-      Object[][] data = new Object[client.getShoppingCart().size()][4];
-      int rowCounter = 0;
-
-      iter = client.getShoppingCart().getShoppingCartProducts();
-      while(iter.hasNext()) {
-        ShoppingCartItem next = iter.next();
-        data[rowCounter][0] = next.getProduct().getId();
-        data[rowCounter][1] = next.getProduct().getName();
-        data[rowCounter][2] = next.getProduct().getSalePrice();
-        data[rowCounter][3] = next.getQuantity();
-        rowCounter++;
-      }
-
-      String[] columnNames = {"Product ID", "Product Name", "Sale Price", "Quantity in Cart"};
-
-      // create & display new JFrame for table
-      JFrame f = new JFrame("Shopping Cart Contents");
-      f.setSize(750,500);
-      f.setLocation(400, 400);
-      JTable table = new JTable(data, columnNames) {
-        private static final long serialVersionUID = 1L;
-        public boolean isCellEditable(int row, int column) {                
-                return false;               
-        }
-      };
-      JScrollPane scrollPane = new JScrollPane(table);
-      table.setFillsViewportHeight(true);
-      f.getContentPane().add(scrollPane);
-      f.setVisible(true);
-      f.paint(f.getGraphics()); 
-      f.toFront();
-      f.requestFocus();
-    }
-
-    // String clientId = WareContext.instance().getUser();
-    // Client client = warehouse.getClientById(clientId);
-    // System.out.println("\n  Shopping Cart Contents:\n");
-    // Iterator<ShoppingCartItem> cIterator = client.getShoppingCart().getShoppingCartProducts();
-    // while(cIterator.hasNext()) {
-    //   ShoppingCartItem item = cIterator.next();
-    //   System.out.println("Product id: " + item.getProduct().getId() + ", name: " + item.getProduct().getName() + 
-    //     ", sale price: $" + item.getProduct().getSalePrice() + ", Quantity in cart: " + item.getQuantity());
-    // }
-    // System.out.println("\n  End of cart. \n" );
-  }
-
   public void modifyCart() {
     (WareContext.instance()).changeState(4); // transition to ShoppingCartState with code 4
   }
@@ -282,7 +226,7 @@ public class ClientState extends WareState implements ActionListener {
     transactionsButton = new JButton("View Transactions");
     waitlistButton = new JButton("View Waitlist");
     productsButton = new JButton("View Product List");
-    modifyCartButton = new JButton("Modify Shopping Cart");
+    modifyCartButton = new JButton("Shopping Cart Menu");
     placeOrderButton = new JButton("Place Order");
     exitButton = new JButton("Logout");  
     clientDetailsButton.addActionListener(this);

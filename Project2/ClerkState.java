@@ -212,7 +212,7 @@ public class ClerkState extends WareState implements ActionListener {
     addClientButton = new JButton("Add Client");
     showProductsButton = new JButton("View Products");
     becomeClientButton = new JButton("Become a Client");
-    queryClientsButton = new JButton("Query Clients");
+    queryClientsButton = new JButton("Query Clients Menu");
     showWaitlistButton = new JButton("View Waitlist");
     receiveShipmentButton = new JButton("Receive a Shipment");
     exitButton = new JButton("Logout");  

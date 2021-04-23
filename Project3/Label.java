@@ -16,8 +16,8 @@ public class Label extends Item {
   public boolean includes(Point point) {
     return distance(point, startingPoint) < 10.0;
   }
- public void render() {
-   uiContext.draw(this);
+  public void render() {
+    uiContext.drawLabel(startingPoint, text);
   }
   public String getText() {
     return text;

@@ -22,6 +22,9 @@ public class Model {
   public static void setView(View view) {
     Model.view = view;
   }
+  public static View getView() {
+    return view;
+  }
   public void markSelected(Item item) {
 // marks an item as selected by moving it to the
 // selceted list.

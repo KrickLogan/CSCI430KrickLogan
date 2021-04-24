@@ -35,5 +35,19 @@ public class Line extends Item {
   public String toString() {
     return "Line  from " + point1 + " to " + point2;
   }
+  @Override
+  public boolean moveTo(Point point) {
+    if(point != null) {
+      int x = point.x;
+      int y = point.y;
+      int dx = x - point1.x;
+      int dy = y - point1.y;
+      point1 = point;
+      point2.x += dx;
+      point2.y += dy;
+      return true;
+    }
+    return false;
+  }
 }
 

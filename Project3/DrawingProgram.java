@@ -9,7 +9,7 @@ public class DrawingProgram {
     Model.setView(view);
     Command.setUndoManager(undoManager);
     Command.setModel(model);
-    // view.show();
+    // view.show(); *deprecated method*
     view.setVisible(true); // supposed to be used instead of view.show() since view.show() is deprecated.
   }
 }

@@ -52,5 +52,21 @@ public class Triangle extends Item {
   public String toString() {
     return "Triangle from " + point1 + " to " + point2 + " to " + point3;
   }
+  @Override
+  public boolean moveTo(Point point) {
+    if(point != null) {
+      int x = point.x;
+      int y = point.y;
+      int dx = x - point1.x;
+      int dy = y - point1.y;
+      point1 = point;
+      point2.x += dx;
+      point2.y += dy;
+      point3.x += dx;
+      point3.y += dy;
+      return true;
+    }
+    return false;
+  }
 }
 

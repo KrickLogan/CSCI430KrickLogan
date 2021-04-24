@@ -19,6 +19,7 @@ public class LineButton  extends JButton implements ActionListener {
     view.setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
     // Change cursor when button is clicked
     drawingPanel.addMouseListener(mouseHandler);
+    drawingPanel.addMouseMotionListener(mouseHandler);
   // Start listening for mouseclicks on the drawing panel
   }
   private class MouseHandler extends MouseAdapter {
@@ -33,6 +34,14 @@ public class LineButton  extends JButton implements ActionListener {
         drawingPanel.removeMouseListener(this);
         view.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
         undoManager.endCommand(lineCommand);
+      }
+    }
+    public void mouseMoved(MouseEvent event) {
+      if (pointCount == 1) {
+        lineCommand.setEndPoint(View.mapPoint(event.getPoint()));
+        view.refresh();
+      } else if (pointCount == 2) {
+        drawingPanel.removeMouseMotionListener(this);
       }
     }
   }

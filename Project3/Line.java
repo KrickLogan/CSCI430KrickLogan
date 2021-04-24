@@ -8,7 +8,7 @@ public class Line extends Item {
   }
   public Line(Point point1) {
     this.point1 = point1;
-	point2 = null;
+	  point2 = null;
   }
   public Line() {
 	  point1 = null;

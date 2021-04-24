@@ -22,6 +22,9 @@ public class LineCommand extends Command {
       line.setPoint2(point);
     }
   }
+  public void setEndPoint(Point point) {
+    line.setPoint2(point);
+  }
   public void execute() {
     model.addItem(line);
   }

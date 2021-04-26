@@ -13,7 +13,7 @@ public class MoveCommand extends Command {
       item = (Item)(enumeration.nextElement());
       if (item.includes(point)) {
         selectedItem = item;
-        startPoint = point;
+        startPoint = item.getStartingPoint();
         break;
       }
     }
@@ -22,10 +22,14 @@ public class MoveCommand extends Command {
     movePoint = point;
   }
   public void moveItem() {
-    selectedItem.moveTo(movePoint);
+    if (selectedItem != null) {
+      selectedItem.moveTo(movePoint);
+    }
   }
   public void moveItemBack() {
-    selectedItem.moveTo(startPoint);
+    if (selectedItem != null) {
+      selectedItem.moveTo(startPoint);
+    }
   }
   public Point getMovePoint() {
     return movePoint;
@@ -34,7 +38,7 @@ public class MoveCommand extends Command {
     return selectedItem;
   }
   public boolean undo() {
-    moveItemBack();
+    moveItemBack(); // better way to do this?
     Model.getView().refresh();
     return true;
   }

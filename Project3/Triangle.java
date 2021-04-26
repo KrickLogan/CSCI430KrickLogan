@@ -68,5 +68,9 @@ public class Triangle extends Item {
     }
     return false;
   }
+  @Override
+  public Point getStartingPoint() {
+    return point1;
+  }
 }
 

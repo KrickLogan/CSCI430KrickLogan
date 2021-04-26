@@ -22,12 +22,13 @@ public class Label extends Item {
   public String getText() {
     return text;
   }
-  public Point getStartingPoint() {
-    return startingPoint;
-  }
   @Override
   public boolean moveTo(Point point) {
     startingPoint = point;
     return false;
+  }
+  @Override
+  public Point getStartingPoint() {
+    return startingPoint;
   }
 }

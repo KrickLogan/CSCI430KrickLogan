@@ -38,7 +38,7 @@ public class MoveCommand extends Command {
     return selectedItem;
   }
   public boolean undo() {
-    moveItemBack(); // better way to do this?
+    moveItemBack();
     Model.getView().refresh();
     return true;
   }
@@ -47,7 +47,7 @@ public class MoveCommand extends Command {
     return true;
   }
   public void execute() {
-    moveItem(); // move item
+    moveItem();
     Model.getView().refresh();
   }
   public boolean end() {

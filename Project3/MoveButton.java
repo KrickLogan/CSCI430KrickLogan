@@ -30,7 +30,7 @@ public class MoveButton  extends JButton implements ActionListener {
         if (moveCommand.getSelectedMoveItem() != null) {
           itemSelected = true;
           drawingPanel.addMouseMotionListener(mouseHandler);
-          System.out.println("Move Item Selected"); // debugging
+          System.out.println("Move Item has been Selected"); // debugging, can be commented out
         }
       } else if (itemSelected == true) {
         moveCommand.setMovePoint(View.mapPoint(event.getPoint()));

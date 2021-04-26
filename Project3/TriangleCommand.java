@@ -1,5 +1,4 @@
 import java.awt.*;
-import java.text.*;
 public class TriangleCommand extends Command {
   private Triangle triangle;
   private int pointCount;

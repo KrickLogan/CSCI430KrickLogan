@@ -105,8 +105,8 @@ class View extends JFrame {
     buttonPanel.add(lineButton);
     buttonPanel.add(triangleButton);
     buttonPanel.add(labelButton);
-    buttonPanel.add(selectButton);
     buttonPanel.add(moveButton);
+    buttonPanel.add(selectButton);
     buttonPanel.add(deleteButton);
     buttonPanel.add(saveButton);
     buttonPanel.add(openButton);

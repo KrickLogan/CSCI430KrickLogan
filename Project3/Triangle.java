@@ -27,9 +27,7 @@ public class Triangle extends Item {
     return ((distance(point, point1 ) < 10.0) || (distance(point, point2) < 10.0) || (distance(point, point3) < 10.0));
   }
   public void render() {
-    uiContext.drawLine(point1, point2);
-    uiContext.drawLine(point2, point3);
-    uiContext.drawLine(point3, point1);
+    uiContext.drawTriangle(point1, point2, point3);
   }
   public void setPoint1(Point point) {
     point1 = point;

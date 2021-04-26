@@ -4,7 +4,6 @@
 ## Instructions for compiling and running
 *View the readme file in a project folder for instructions for compiling and running a specific project.*
 
-1. Navigate to a project directory. (../Project2 or ../Project3)
-2. Compile the java files using 'javac *.java'.
-3. Run the program for Project2 using 'java WareContext'.
-3.1. Run the program for Project 3 using 'java DrawingProgram'.
+## Project Descriptions
+- **Project2:** Warehouse FSM system that allows for Clients, Clerks, and Managers to access the system. The assignment was to build a GUI the Warehouse system.
+- **Project3:** Fix Drawing Program to correctly use Bridge pattern when adding a label, add user friendly line drawing (preview of the line while drawing), add a Triangle shape, and move an object (with a live preview).
